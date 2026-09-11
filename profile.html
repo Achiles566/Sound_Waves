@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile_user.username }} — SoundWave{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="profile-header">
+    <div class="profile-avatar">
+      {% if profile_user.profile and profile_user.profile.avatar_path %}
+        <img src="{{ url_for('static', filename=profile_user.profile.avatar_path) }}" alt="" />
+      {% else %}
+        <span>{{ profile_user.username[0]|upper }}</span>
+      {% endif %}
+    </div>
+
+    <div class="profile-header-text">
+      <h1>{{ profile_user.username }}</h1>
+      {% if profile_user.profile and profile_user.profile.bio %}
+        <p class="profile-bio">{{ profile_user.profile.bio }}</p>
+      {% endif %}
+    </div>
+
+    {% if is_own_profile %}
+      <a href="{{ url_for('edit_profile') }}" class="btn btn-outline">Edit profile</a>
+    {% endif %}
+  </div>
+
+  <h2 class="section-title">{{ songs|length }} track{{ 's' if songs|length != 1 else '' }}</h2>
+
+  {% if not songs %}
+    <div class="empty-state">
+      <p>
+        {% if is_own_profile %}
+          You haven't uploaded anything yet. <a href="{{ url_for('upload') }}">Upload your first track.</a>
+        {% else %}
+          No tracks uploaded yet.
+        {% endif %}
+      </p>
+    </div>
+  {% else %}
+    <div class="song-grid">
+      {% for song in songs %}
+        <div
+          class="song-card"
+          data-id="{{ song.id }}"
+          data-title="{{ song.title }}"
+          data-artist="{{ song.artist }}"
+          data-audio="{{ url_for('static', filename=song.audio_path) }}"
+          data-cover="{{ url_for('static', filename=song.cover_path) if song.cover_path else url_for('static', filename='images/default-cover.svg') }}"
+        >
+          <div class="song-cover-wrap">
+            <img
+              src="{{ url_for('static', filename=song.cover_path) if song.cover_path else url_for('static', filename='images/default-cover.svg') }}"
+              alt="" class="song-cover"
+            />
+            <button class="play-overlay-btn" aria-label="Play {{ song.title }}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <p class="song-title">{{ song.title }}</p>
+          <span class="song-artist">{{ song.artist }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

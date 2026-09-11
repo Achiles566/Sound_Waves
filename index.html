@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}SoundWave{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  {% if query is none %}
+    <section class="hero">
+      <h1>Put your sound out there.</h1>
+      <p>Upload a track, get a page, share the link.</p>
+    </section>
+    <h2 class="section-title">Latest uploads</h2>
+  {% else %}
+    <h2 class="section-title">
+      {% if songs %}
+        Results for &ldquo;{{ query }}&rdquo;
+      {% else %}
+        No results for &ldquo;{{ query }}&rdquo;
+      {% endif %}
+    </h2>
+  {% endif %}
+
+  {% if not songs %}
+    <div class="empty-state">
+      {% if query %}
+        <p>Try a different title or artist name.</p>
+      {% else %}
+        <p>Nothing uploaded yet. <a href="{{ url_for('upload') if current_user.is_authenticated else url_for('signup') }}">Be the first!</a></p>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="song-grid">
+      {% for song in songs %}
+        <div
+          class="song-card"
+          data-id="{{ song.id }}"
+          data-title="{{ song.title }}"
+          data-artist="{{ song.artist }}"
+          data-audio="{{ url_for('static', filename=song.audio_path) }}"
+          data-cover="{{ url_for('static', filename=song.cover_path) if song.cover_path else url_for('static', filename='images/default-cover.svg') }}"
+        >
+          <div class="song-cover-wrap">
+            <img
+              src="{{ url_for('static', filename=song.cover_path) if song.cover_path else url_for('static', filename='images/default-cover.svg') }}"
+              alt="" class="song-cover"
+            />
+            <button class="play-overlay-btn" aria-label="Play {{ song.title }}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <p class="song-title">{{ song.title }}</p>
+          <a href="{{ url_for('profile', username=song.uploader.username) }}" class="song-artist">{{ song.artist }}</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
