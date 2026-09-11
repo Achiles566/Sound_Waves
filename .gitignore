@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+.env
+database.db
+static/uploads/audio/*
+static/uploads/covers/*
+static/uploads/avatars/*
+!static/uploads/audio/.gitkeep
+!static/uploads/covers/.gitkeep
+!static/uploads/avatars/.gitkeep
+.DS_Store
